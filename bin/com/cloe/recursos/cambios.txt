@@ -1,0 +1,3 @@
+Los pedidos de fullfilment crear el pedido en sap y generar la entrega
+Crear en pedidos diferentes cuando tengamos n productos en un mismo pedido
+Poner en comentarios el id del pago
