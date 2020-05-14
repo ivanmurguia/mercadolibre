@@ -37,8 +37,9 @@ import com.sap.smb.sbo.api.SBOCOMUtil;
 
 
 public class Main {
-	private String carpetaML = "C:\\Users\\ivanm\\Documents\\MercadoLibre\\test\\";
-//	private String carpetaML = "\\\\192.168.1.34\\Privalia\\MercadoLibre\\";
+//	private String carpetaML = "C:\\Users\\ivanm\\Documents\\mercadolibre\\test\\";
+	private String carpetaML = "\\\\192.168.1.34\\Privalia\\MercadoLibre\\";
+	List<Log> logs = new ArrayList<>();
 	
 	private File limpiarXML(String path) {
 
@@ -215,7 +216,8 @@ public class Main {
 			} catch (SAXException | IOException | ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				System.out.println("Error:" + e);
+				System.out.println("Este es el puto error :" + e);
+				logs.add(new Log(path.replace("\\\\192.168.1.34\\Privalia\\MercadoLibre\\Entrada\\", "").replace(".xml", ""),"Error", "Error en codificacion de archivo", new Date()));
 			}
 		
 		for(int i = 0; i < pedido.getPedidos().size(); i++) {
@@ -239,7 +241,7 @@ public class Main {
 		return pedido;
 	}
 	public List<Log> pedidoaSAP(List<Pedido> pedidos) {
-		List<Log> logs = new ArrayList<>();
+		
 		try {
 			Calendar hoy = Calendar.getInstance();
 			hoy.add(Calendar.DAY_OF_MONTH, 1);
@@ -299,73 +301,6 @@ public class Main {
 							while(new File(carpetaML + "Procesados\\Duplicados\\"+pedidos.get(i).getPedidos().get(0).getFolio()+"-" + k +".xml").exists()) {
 								k++;
 							}
-							/*
-							System.out.println("Creando el pedido FullFilment" + pedidos.get(i).getPedidos().get(0).getFolio());
-							IDocuments pedidoSAP = SBOCOMUtil.newDocuments(sap.company, SBOCOMConstants.BoObjectTypes_Document_oOrders);
-							pedidoSAP.setDocDueDate(hoy.getTime());
-							pedidoSAP.setCardCode("C-03826");
-							pedidoSAP.getUserFields().getFields().item("U_FormaDePago").setValue("99");
-							pedidoSAP.getUserFields().getFields().item("U_MetodoDePago").setValue("PPD");
-							pedidoSAP.getUserFields().getFields().item("U_UsoCFDI").setValue("G01");
-							pedidoSAP.setNumAtCard("ML-" + pedido);
-							pedidoSAP.setComments("Produteka: " + pedidos.get(i).getFolio() + "\nPago: " + pedidos.get(i).getPedidos().get(l).getPago().getId());
-							pedidoSAP.setSeries(74);
-							if(pedidos.get(i).getGuia() != null && pedidos.get(i).getGuia().length() >= 15) {
-								pedidoSAP.getUserFields().getFields().item("U_NumdeGuia").setValue(pedidos.get(i).getGuia().substring(0, 15));
-							}else {
-								pedidoSAP.getUserFields().getFields().item("U_NumdeGuia").setValue(pedidos.get(i).getGuia());
-							}
-							System.out.println("sku "+pedidos.get(i).getPedidos().get(l).getProducto().getSku());
-							pedidoSAP.getLines().setCostingCode5("1801");
-							pedidoSAP.getLines().setCOGSCostingCode5("1801");
-							pedidoSAP.getLines().setItemCode(pedidos.get(i).getPedidos().get(l).getProducto().getSku());
-							pedidoSAP.getLines().setQuantity(pedidos.get(i).getPedidos().get(l).getProducto().getCantidad());
-							pedidoSAP.getLines().setWarehouseCode("37");
-							pedidoSAP.getLines().setTaxCode("IVAV16");
-							pedidoSAP.getLines().setLineTotal(pedidos.get(i).getPedidos().get(l).getProducto().getMonto()/1.16);
-							pedidoSAP.getLines().add();
-							
-							if(pedidoSAP.add() != 0) {
-								System.out.println("No se pudo crear el pedido " + pedidos.get(i).getPedidos().get(0).getFolio() + " por: " + sap.company.getLastErrorDescription());
-								logs.add(new Log(pedido,"Error", sap.company.getLastErrorDescription(), new Date()));
-							} else {
-								pedidoSAP.getByKey(Integer.parseInt(sap.company.getNewObjectKey()));
-								System.out.println("DocEntry:" + pedidoSAP.getDocEntry());
-
-								IDocuments facturaSAP = SBOCOMUtil.newDocuments(sap.company, SBOCOMConstants.BoObjectTypes_Document_oInvoices);
-								facturaSAP.setCardCode(pedidoSAP.getCardCode());
-								facturaSAP.setDocDate(pedidoSAP.getDocDate());
-								facturaSAP.setDocDueDate(pedidoSAP.getDocDueDate());
-								facturaSAP.setNumAtCard(pedidoSAP.getNumAtCard());
-								facturaSAP.setComments(pedidoSAP.getComments());
-								facturaSAP.getUserFields().getFields().item("U_FormaDePago").setValue(pedidoSAP.getUserFields().getFields().item("U_FormaDePago").getValue());
-								facturaSAP.getUserFields().getFields().item("U_MetodoDePago").setValue(pedidoSAP.getUserFields().getFields().item("U_MetodoDePago").getValue());
-								facturaSAP.getUserFields().getFields().item("U_UsoCFDI").setValue(pedidoSAP.getUserFields().getFields().item("U_UsoCFDI").getValue());
-								facturaSAP.setSeries(986);
-								
-								facturaSAP.getLines().setCurrentLine(0);
-								facturaSAP.getLines().setBaseEntry(pedidoSAP.getDocEntry());
-								facturaSAP.getLines().setBaseLine(0);
-								facturaSAP.getLines().setBaseType(SBOCOMConstants.BoObjectTypes_Document_oOrders);
-								facturaSAP.getLines().setCostingCode5("1801");
-								facturaSAP.getLines().setCOGSCostingCode5("1801");
-								facturaSAP.getLines().setItemCode(pedidos.get(i).getPedidos().get(l).getProducto().getSku());
-								facturaSAP.getLines().setQuantity(pedidos.get(i).getPedidos().get(l).getProducto().getCantidad());
-								facturaSAP.getLines().setWarehouseCode("37");
-								facturaSAP.getLines().setTaxCode("IVAV16");
-								facturaSAP.getLines().setPrice(pedidos.get(i).getPedidos().get(l).getProducto().getMonto()/1.16);
-								facturaSAP.getLines().setLineTotal(pedidos.get(i).getPedidos().get(l).getProducto().getMonto()/1.16);
-								facturaSAP.getLines().add();
-								
-								if(facturaSAP.add() != 0) {
-									System.out.println("No se pudo crear la Factura del pedido " + pedidos.get(i).getPedidos().get(0).getFolio() + " por: " + sap.company.getLastErrorDescription());
-									logs.add(new Log(pedido,"Error", sap.company.getLastErrorDescription(), new Date()));
-								} else {
-									facturaSAP.getByKey(Integer.parseInt(sap.company.getNewObjectKey()));
-									logs.add(new Log(pedido,"Correcto", "Pedido creado con el Folio: " + pedidoSAP.getDocNum() + "\nFactura de pedido Fullfilment creada con el id SAP " + facturaSAP.getDocNum(), new Date()));
-								}
-							}
-							*/
 							
 							logs.add(new Log(pedido,"Correcto", "Pedido FullFilment", new Date()));
 							

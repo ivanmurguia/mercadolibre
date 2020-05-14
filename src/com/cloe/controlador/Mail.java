@@ -16,30 +16,6 @@ public class Mail {
 	public void sendMail(List<Log> logs) {
 				String pedidosbien = "";
 				String pedidosmal = "";
-//				String encabezado = "" +
-//							  "<html>\r\n" + 
-//							  "<style>\r\n" + 
-//							  "	table{\r\n" + 
-//							  "		border-collapse: collapse;\r\n" + 
-//							  "		border: 1px solid black;\r\n" + 
-//							  "	}\r\n" + 
-//							  "	table th{\r\n" + 
-//							  "		  background-color: black;\r\n" + 
-//							  "  		  color: white;\r\n" + 
-//							  "	}\r\n" + 
-//							  "	table tr:nth-child(even) {\r\n" + 
-//							  "  		  background-color: rgb(255, 252, 35);\r\n" + 
-//							  "	}\r\n" + 
-//							  "</style>\r\n" + 
-//							  "<font face=\"Century Gothic\">\r\n" + 
-//							  "<h2 align=\"center\">Ordenes procesadas Mercado Libre</h2>\r\n" + 
-//							  "<table style=\"width:100%\">\r\n" + 
-//							  "	<tr>\r\n" + 
-//							  "		<th>Pedido</th>\r\n" + 
-//							  "		<th>Estatus</th>\r\n" + 
-//							  "		<th>Mensaje</th>\r\n" + 
-//							  "		<th>Fecha/Hora</th>\r\n" + 
-//							  "	</tr>\r\n";
 				String encabezado = "<html>\r\n" + 
 						"<body style=\"margin: 0; padding: 0;\">\r\n" + 
 						"	<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">	\r\n" + 
@@ -96,9 +72,6 @@ public class Mail {
 						"	</table>\r\n" + 
 						"</body>\r\n" + 
 						"</html>";
-//				String pie =  "</table>\r\n" + 
-//						  "<p>Favor de corregir estos errores.</p>\r\n" + 
-//						  "</html>";
 				  for(int i = 0; i < logs.size(); i++) {
 					  if(logs.get(i).getStatus().equals("Correcto")) {
 						  pedidosbien = pedidosbien + 
@@ -132,15 +105,13 @@ public class Mail {
 				    props.put("mail.smtp.port", "25");
 
 				    Session session = Session.getDefaultInstance(props);
-//				    session.setDebug(true);
 				    
 			        try {
 			        	if(!pedidosbien.equals("")) {
 				        	MimeMessage message = new MimeMessage(session);
 							message.setFrom(new InternetAddress(remitente));
-//					        message.addRecipients(Message.RecipientType.TO, "andreaa@oemoda.com");
-//					        message.addRecipients(Message.RecipientType.TO, "davids@oemoda.com");
-//					        message.addRecipients(Message.RecipientType.TO, "rodrigoa@oemoda.com");
+					        message.addRecipients(Message.RecipientType.TO, "davids@oemoda.com");
+					        message.addRecipients(Message.RecipientType.TO, "luisaa_@oemoda.com");
 					        message.addRecipients(Message.RecipientType.CC, "ivanm@oemoda.com");
 					        message.setSubject("Pedidos procesados");
 					        message.setContent(encabezado+pedidosbien+pie,"text/html");
@@ -152,9 +123,8 @@ public class Mail {
 			        	if(!pedidosmal.equals("")) {
 				        	MimeMessage message = new MimeMessage(session);
 							message.setFrom(new InternetAddress(remitente));
-					        message.addRecipients(Message.RecipientType.TO, "andreaa@oemoda.com");
 					        message.addRecipients(Message.RecipientType.TO, "davids@oemoda.com");
-					        message.addRecipients(Message.RecipientType.TO, "rodrigoa@oemoda.com");
+					        message.addRecipients(Message.RecipientType.TO, "luisaa_@oemoda.com");
 					        message.addRecipients(Message.RecipientType.CC, "ivanm@oemoda.com");
 					        message.setSubject("Pedidos procesados con errores");
 					        message.setContent(encabezado+pedidosmal+pie,"text/html");

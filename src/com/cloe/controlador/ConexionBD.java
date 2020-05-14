@@ -8,14 +8,13 @@ import java.sql.Statement;
 
 public class ConexionBD {
   private Connection con = null;
-  private String url = "";
   public int numeroColumnas;
   public Statement sentencia;
   public ResultSet resultado;
   
   private String URLconexion() {
-//  	return url = "jdbc:sqlserver://192.168.1.26;databaseName=OE_MODA2017;user=sa;password=B1Admin";
-  	return url = "jdbc:sqlserver://192.168.1.26;databaseName=Oe_Moda_RetailPruebas;user=sa;password=B1Admin";
+  	return "jdbc:sqlserver://192.168.1.26;databaseName=OE_MODA2017;user=sa;password=B1Admin";
+//  	return "jdbc:sqlserver://192.168.1.26;databaseName=Oe_Moda_RetailPruebas;user=sa;password=B1Admin";
   }
   public Connection conectar() {
       try {
